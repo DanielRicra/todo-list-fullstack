@@ -67,7 +67,7 @@ const Auth = () => {
       } else {
          // eslint-disable-next-line no-useless-escape
          const emailFormat =
-            /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            /^(([^<>()[\].,;:\s@]+(\.[^<>()[\].,;:\s@]+)*)|)@(([^<>()[\].,;:\s@]+\.)+[^<>()[\].,;:\s@]{2,})$/i;
 
          if (!emailFormat.test(formData.email)) {
             setEmailError(true);
