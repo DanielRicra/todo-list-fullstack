@@ -130,12 +130,13 @@ const Auth = () => {
    }, [emailError]);
 
    const handleChange = (e) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-      if (e.target.value !== '' && e.target.name === 'name') {
+      const { name, value } = e.target;
+      setFormData({ ...formData, [name]: value });
+      if (value !== '' && name === 'name') {
          setNameError(false);
-      } else if (e.target.value !== '' && e.target.name === 'password') {
+      } else if (value !== '' && name === 'password') {
          setPasswordError(false);
-      } else if (e.target.value !== '' && e.target.name === 'email') {
+      } else if (value !== '' && name === 'email') {
          setEmailError(false);
       }
    };
