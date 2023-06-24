@@ -32,6 +32,7 @@ const Auth = () => {
       status: 0,
    });
    const [loadingSubmit, setLoadingSubmit] = useState(false);
+
    const navigate = useNavigate();
 
    useEffect(() => {
@@ -88,16 +89,11 @@ const Auth = () => {
 
       try {
          setLoadingSubmit(true);
-         const response = await axios.post(
-            `http://localhost:8080/api/user${isSignUp ? '' : '/signIn'}`,
-            formData
-         );
 
-         const user = {
-            email: response.data?.email,
-            userId: response.data?.userId,
-            name: response.data?.name,
-         };
+         const response = await axios.post(`https://spring-tstodolist.herokuapp.com/api/user${isSignUp ? '': '/signIn'}`, formData);
+           
+         const user = { email: response.data?.email, userId: response.data?.userId, name: response.data?.name }
+
          localStorage.setItem('user', JSON.stringify(user));
          navigate('/dashboard');
       } catch (error) {
