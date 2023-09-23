@@ -13,7 +13,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-import { MyLoadingButton } from '../Buttons/Buttons';
+import { MyLoadingButton } from '../../components/Buttons/Buttons';
 import { darkTheme } from './styles';
 import './Auth.scss';
 
