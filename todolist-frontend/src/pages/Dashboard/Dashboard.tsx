@@ -1,8 +1,8 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import Navbar from '../Navbar/Navbar';
-import Sidebar from '../Sidebar/Sidebar';
-import Tasks from '../Tasks/Tasks';
+import { useEffect, useState } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
+import Sidebar from '../../components/Sidebar/Sidebar';
+import Tasks from '../../components/Tasks/Tasks';
 import { useNavigate } from 'react-router-dom'; 
 
 import './Dashboard.scss';
