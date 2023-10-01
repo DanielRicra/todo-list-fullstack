@@ -1,20 +1,15 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 
-import Auth from './pages/Auth/Auth';
 import './App.scss';
-import Dashboard from './pages/Dashboard/Dashboard';
+import { UserContextProvider } from './providers/User';
+import { router } from './routes/router';
 
 const App = () => {
-   
    return (
-      <Router>
-         <Routes>
-            <Route path='/' element={<Navigate to='/auth' />} />
-            <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/auth' element={<Auth />} />
-         </Routes>
-      </Router>
+      <UserContextProvider>
+         <RouterProvider router={router} fallbackElement={<p>Initial...</p>} />
+      </UserContextProvider>
    );
-}
+};
 
 export default App;
