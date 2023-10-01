@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
    FormControl,
    Input,
@@ -6,18 +6,18 @@ import {
    InputLabel,
    IconButton,
    FormHelperText,
-} from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
-import InputAdornment from '@mui/material/InputAdornment';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+} from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import InputAdornment from "@mui/material/InputAdornment";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import axios, { AxiosError } from "axios";
 
-import { MyLoadingButton } from '../../components/Buttons/Buttons';
-import { darkTheme } from './styles';
-import './Auth.scss';
+import { MyLoadingButton } from "../../components/Buttons/Buttons";
+import { darkTheme } from "./styles";
+import "./Auth.scss";
 
-const initialState = { email: '', password: '', name: '' };
+const initialState = { email: "", password: "", name: "" };
 
 const Auth = () => {
    const [isSignUp, setIsSignUp] = useState(false);
@@ -27,22 +27,16 @@ const Auth = () => {
    const [formData, setFormData] = useState(initialState);
    const [showPassword, setShowPassword] = useState(false);
    const [errorMessages, setErrorMessages] = useState({
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       status: 0,
    });
    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
    const navigate = useNavigate();
 
-   useEffect(() => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user) navigate('/dashboard');
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
-
    const clearData = () => {
-      setFormData({ name: '', password: '', email: '' });
+      setFormData({ name: "", password: "", email: "" });
    };
 
    const switchForm = () => {
@@ -52,7 +46,7 @@ const Auth = () => {
 
    const validateInputs = () => {
       let isErrors = { password: false, name: false, email: false };
-      if (formData.name === '') {
+      if (formData.name === "") {
          if (isSignUp) {
             setNameError(true);
             isErrors = { ...isErrors, name: true };
@@ -60,10 +54,10 @@ const Auth = () => {
             setNameError(false);
          }
       }
-      if (formData.email.trim() === '') {
+      if (formData.email.trim() === "") {
          setEmailError(true);
          isErrors = { ...isErrors, email: true };
-         setErrorMessages({ ...errorMessages, email: 'Cannot be empty' });
+         setErrorMessages({ ...errorMessages, email: "Cannot be empty" });
       } else {
          // eslint-disable-next-line no-useless-escape
          const emailFormat =
@@ -72,10 +66,10 @@ const Auth = () => {
          if (!emailFormat.test(formData.email)) {
             setEmailError(true);
             isErrors = { ...isErrors, email: true };
-            setErrorMessages({ ...errorMessages, email: 'Invalid email' });
+            setErrorMessages({ ...errorMessages, email: "Invalid email" });
          }
       }
-      if (formData.password === '') {
+      if (formData.password === "") {
          setPasswordError(true);
          isErrors = { ...isErrors, password: true };
       }
@@ -90,20 +84,31 @@ const Auth = () => {
       try {
          setLoadingSubmit(true);
 
-         const response = await axios.post(`https://spring-tstodolist.herokuapp.com/api/user${isSignUp ? '': '/signIn'}`, formData);
-           
-         const user = { email: response.data?.email, userId: response.data?.userId, name: response.data?.name }
+         const response = await axios.post(
+            `https://spring-tstodolist.herokuapp.com/api/user${
+               isSignUp ? "" : "/signIn"
+            }`,
+            formData
+         );
 
-         localStorage.setItem('user', JSON.stringify(user));
-         navigate('/dashboard');
+         const user = {
+            email: response.data?.email,
+            userId: response.data?.userId,
+            name: response.data?.name,
+         };
+
+         localStorage.setItem("user", JSON.stringify(user));
+         navigate("/dashboard");
       } catch (error) {
-         if (error.response?.status === 404) {
-            setEmailError(true);
-         } else if (error.response?.status === 400) {
-            setPasswordError(true);
-         } else if (error.response?.status === 409) {
-            setErrorMessages({ ...errorMessages, status: 409 });
-            setEmailError(true);
+         if (error instanceof AxiosError) {
+            if (error.response?.status === 404) {
+               setEmailError(true);
+            } else if (error.response?.status === 400) {
+               setPasswordError(true);
+            } else if (error.response?.status === 409) {
+               setErrorMessages({ ...errorMessages, status: 409 });
+               setEmailError(true);
+            }
          }
       } finally {
          setLoadingSubmit(false);
@@ -114,7 +119,7 @@ const Auth = () => {
       if (errorMessages.status === 409) {
          setErrorMessages({
             ...errorMessages,
-            email: 'Email already taken',
+            email: "Email already taken",
          });
       } else if (errorMessages.status === 404) {
          setErrorMessages({
@@ -125,14 +130,16 @@ const Auth = () => {
       // eslint-disable-next-line
    }, [emailError]);
 
-   const handleChange = (e) => {
+   const handleChange: React.ChangeEventHandler<
+      HTMLInputElement | HTMLTextAreaElement
+   > = (e) => {
       const { name, value } = e.target;
       setFormData({ ...formData, [name]: value });
-      if (value !== '' && name === 'name') {
+      if (value !== "" && name === "name") {
          setNameError(false);
-      } else if (value !== '' && name === 'password') {
+      } else if (value !== "" && name === "password") {
          setPasswordError(false);
-      } else if (value !== '' && name === 'email') {
+      } else if (value !== "" && name === "email") {
          setEmailError(false);
       }
    };
@@ -142,54 +149,54 @@ const Auth = () => {
    };
 
    return (
-      <div className='auth'>
-         <h1 className='h1'>{isSignUp ? 'Sign Up' : 'Log In'}</h1>
-         <div className='auth__container'>
-            <div className='form'>
+      <div className="auth">
+         <h1 className="h1">{isSignUp ? "Sign Up" : "Log In"}</h1>
+         <div className="auth__container">
+            <div className="form">
                <ThemeProvider theme={darkTheme}>
                   <TextField
-                     label='Email'
-                     variant='standard'
+                     label="Email"
+                     variant="standard"
                      error={emailError}
                      onChange={handleChange}
-                     name='email'
+                     name="email"
                      value={formData.email}
-                     color='secondary'
-                     helperText={emailError ? errorMessages.email : ''}
+                     color="secondary"
+                     helperText={emailError ? errorMessages.email : ""}
                   />
 
                   {isSignUp && (
                      <TextField
-                        label='Name'
-                        variant='standard'
+                        label="Name"
+                        variant="standard"
                         error={nameError}
                         onChange={handleChange}
                         value={formData.name}
-                        name='name'
-                        color='secondary'
-                        helperText={nameError ? 'Cannot be empty' : ''}
+                        name="name"
+                        color="secondary"
+                        helperText={nameError ? "Cannot be empty" : ""}
                      />
                   )}
 
                   <FormControl
-                     variant='standard'
+                     variant="standard"
                      error={passwordError}
-                     color='secondary'
+                     color="secondary"
                   >
-                     <InputLabel htmlFor='standard-adornment-password'>
+                     <InputLabel htmlFor="standard-adornment-password">
                         Password
                      </InputLabel>
                      <Input
-                        id='standard-adornment-password'
-                        type={showPassword ? 'text' : 'password'}
+                        id="standard-adornment-password"
+                        type={showPassword ? "text" : "password"}
                         onChange={handleChange}
-                        name='password'
+                        name="password"
                         error={passwordError}
                         value={formData.password}
                         endAdornment={
-                           <InputAdornment position='end'>
+                           <InputAdornment position="end">
                               <IconButton
-                                 aria-label='toggle password visibility'
+                                 aria-label="toggle password visibility"
                                  onClick={handleShowPassword}
                               >
                                  {showPassword ? (
@@ -202,7 +209,7 @@ const Auth = () => {
                         }
                      />
                      {passwordError && (
-                        <FormHelperText id='filled-weight-helper-text'>
+                        <FormHelperText id="filled-weight-helper-text">
                            Incorrect Password
                         </FormHelperText>
                      )}
@@ -210,20 +217,20 @@ const Auth = () => {
                </ThemeProvider>
 
                <MyLoadingButton
-                  variant='contained'
+                  variant="contained"
                   onClick={() => {
                      handleSubmit();
                   }}
                   loading={loadingSubmit}
                >
-                  {isSignUp ? 'Sign Up' : 'Sign In'}
+                  {isSignUp ? "Sign Up" : "Sign In"}
                </MyLoadingButton>
             </div>
 
-            <div style={{ textAlign: 'center' }}>
-               <div className='link-signin-signup' onClick={switchForm}>
+            <div style={{ textAlign: "center" }}>
+               <div className="link-signin-signup" onClick={switchForm}>
                   {isSignUp
-                     ? 'Already have an Account? Sign In'
+                     ? "Already have an Account? Sign In"
                      : "Don't have an account? Sign Up"}
                </div>
             </div>

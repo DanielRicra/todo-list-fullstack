@@ -149,7 +149,15 @@ p {
 
 .sidebar-container {
    position: relative;
-   padding: 8px 12px;
+   a {
+      display: flex;
+      gap: .5rem;
+      color: inherit;
+      padding: 8px 12px;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: inherit;
+   }
 }
 .sidebar__create-tasklist {
    width: 100%;
