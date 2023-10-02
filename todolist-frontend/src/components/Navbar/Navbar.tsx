@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
-import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import { useState } from "react";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
+import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
-import './Navbar.scss';
-import { useNavigate } from 'react-router-dom';
-import { useUserContext } from '../../providers/User';
+import "./Navbar.scss";
+import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../providers/User";
 
 interface NavbarProps {
    setShowSidebar: (value: boolean) => void;
@@ -16,32 +16,32 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ setShowSidebar }) => {
    const [isArrowUp, setIsArrowUp] = useState(false);
    const navigate = useNavigate();
-   const { user } = useUserContext();
+   const { user, signOut } = useUserContext();
 
-   const signOut = () => {
-      localStorage.clear();
-      navigate('/login');
+   const onSignOut = () => {
+      signOut();
+      navigate("/signIn");
    };
 
    return (
-      <nav className='nav' id='navbar'>
-         <div className='nav__navbar relative'>
+      <nav className="nav" id="navbar">
+         <div className="nav__navbar relative">
             <div
-               className='nav__menu-icon'
+               className="nav__menu-icon"
                onClick={() => setShowSidebar(true)}
             >
                <MenuOutlinedIcon />
             </div>
 
             <div
-               className='nav__profile'
+               className="nav__profile"
                onClick={() => setIsArrowUp((prev) => !prev)}
             >
-               <div className='nav__profile-img'>
-                  {user?.name?.split(' ')[0].charAt(0)}
-                  {user?.name?.split(' ')[1]?.charAt(0)}
+               <div className="nav__profile-img">
+                  {user?.name?.split(" ")[0].charAt(0)}
+                  {user?.name?.split(" ")[1]?.charAt(0)}
                </div>
-               <div className='nav__profile-user'>{user?.name}</div>
+               <div className="nav__profile-user">{user?.name}</div>
                {isArrowUp ? (
                   <KeyboardArrowUpRoundedIcon />
                ) : (
@@ -50,12 +50,12 @@ const Navbar: React.FC<NavbarProps> = ({ setShowSidebar }) => {
             </div>
 
             {isArrowUp && (
-               <div className='nav__profile-menu'>
+               <div className="nav__profile-menu">
                   <span>{user?.email}</span>
                   <p>
                      <ManageAccountsOutlinedIcon /> Profile
                   </p>
-                  <p onClick={signOut}>
+                  <p onClick={onSignOut}>
                      <LogoutRoundedIcon /> Sign out
                   </p>
                </div>
@@ -63,7 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({ setShowSidebar }) => {
          </div>
          {isArrowUp && (
             <span
-               className='overlay__more-icon'
+               className="overlay__more-icon"
                onClick={() => setIsArrowUp(false)}
             ></span>
          )}
