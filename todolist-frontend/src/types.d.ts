@@ -22,3 +22,9 @@ export interface Task {
   taskListId: number
   important?: boolean
 }
+
+export interface UserForAuth {
+  email: string;
+  password: string;
+  name: string;
+}
