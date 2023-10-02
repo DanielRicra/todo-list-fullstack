@@ -53,7 +53,15 @@ export const router = createBrowserRouter([
       ],
    },
    {
-      path: 'login',
+      path: 'signin',
+      element: (
+         <Suspense fallback={<p>Loading pages...</p>}>
+            <AuthPage />
+         </Suspense>
+      ),
+   },
+   {
+      path: 'signup',
       element: (
          <Suspense fallback={<p>Loading pages...</p>}>
             <AuthPage />
