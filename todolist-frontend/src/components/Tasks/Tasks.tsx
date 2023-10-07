@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Box, Skeleton, Snackbar } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -9,8 +9,8 @@ import "./Tasks.scss";
 import Task from "./Task/Task";
 import TaskForm from "./TaskForm/TaskForm";
 import CreateTaskForm from "./CreateTaskForm/CreateTaskForm";
-import type { TaskList } from "../../types";
 import { TaskListHeader } from "./TaskListHeader";
+import { useGetTaskList } from "../../hooks/useTaskLists";
 
 const Tasks = () => {
    const navbar = document.getElementById("navbar");
@@ -20,14 +20,14 @@ const Tasks = () => {
    const [showWarningCreateTask, setShowWarningCreateTask] = useState(false);
 
    const { taskListId } = useParams();
-   const taskList: TaskList = { name: "", taskListId: 1, tasks: [], userId: 4 };
+   const { data: taskList, isLoading } = useGetTaskList(taskListId ?? "");
 
    const completedTasks = useMemo(() => {
-      return taskList.tasks.filter((task) => !!task.state);
+      return taskList?.tasks.filter((task) => !!task.state) ?? [];
    }, [taskList]);
 
    const pendingTasks = useMemo(() => {
-      return taskList.tasks.filter((task) => !task.state);
+      return taskList?.tasks.filter((task) => !task.state) ?? [];
    }, [taskList]);
 
    const handleCloseWarning = () => setShowWarningCreateTask(false);
@@ -41,19 +41,27 @@ const Tasks = () => {
          >
             <div className="tasks__container">
                <div className="tasks__list">
-                  <TaskListHeader taskListName={taskList.name} />
+                  <TaskListHeader taskListName={taskList?.name ?? ""} />
 
-                  {taskList.tasks.length === 0 && (
+                  {taskList?.tasks.length === 0 && (
                      <h3 className="h3">There are no tasks yet</h3>
                   )}
-
-                  <ul>
-                     {pendingTasks.map((task) => (
-                        <li key={task.taskId}>
-                           <Task task={task} onEdit={() => {}} />
-                        </li>
-                     ))}
-                  </ul>
+                  {isLoading ? (
+                     <Box sx={{ width: '100%' }}>
+                        <Skeleton animation="wave" />
+                        <Skeleton animation="wave" />
+                        <Skeleton animation="wave" />
+                     </Box>
+                  ) : (
+                        <ul>
+                           {pendingTasks?.map((task) => (
+                              <li key={task.taskId}>
+                                 <Task task={task} onEdit={() => {}} />
+                              </li>
+                           ))}
+                        </ul>
+                     )
+                  }
 
                   {completedTasks.length > 0 && (
                      <div>
@@ -120,7 +128,7 @@ const Tasks = () => {
             <>
                <TaskForm
                   setTaskFormId={setTaskFormId}
-                  task={taskList.tasks.find((tsk) => tsk.taskId === taskFormId)}
+                  task={taskList?.tasks.find((tsk) => tsk.taskId === taskFormId)}
                   setTasks={undefined}
                   tasks={undefined}
                />
