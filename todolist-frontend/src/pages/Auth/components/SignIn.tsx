@@ -45,6 +45,10 @@ const SignIn = () => {
 
    const { control, handleSubmit } = useForm<User>({
       resolver: yupResolver(userSchema),
+      defaultValues: {
+         email: "",
+         password: "",
+      }
    });
 
    const { isLoading, mutate } = useMutation({
