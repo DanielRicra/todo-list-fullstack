@@ -25,14 +25,6 @@ export const router = createBrowserRouter([
                   element: <DashboardWelcome />,
                },
                {
-                  path: ':taskListId',
-                  element: (
-                     <Suspense>
-                        <Tasks />
-                     </Suspense>
-                  ),
-               },
-               {
                   path: 'tasks/important',
                   element: (
                      <Suspense>
@@ -47,7 +39,15 @@ export const router = createBrowserRouter([
                         <div>Planned</div>
                      </Suspense>
                   ),
-               }
+               },
+               {
+                  path: ':taskListId',
+                  element: (
+                     <Suspense>
+                        <Tasks />
+                     </Suspense>
+                  ),
+               },
             ],
          },
       ],
