@@ -9,10 +9,7 @@ const ProtectedRoutes = () => {
    }
 
    return (
-      <>
-         <div>Layout</div>
-         <Outlet />
-      </>
+      <Outlet />
    );
 };
 
