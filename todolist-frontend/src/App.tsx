@@ -4,6 +4,8 @@ import { router } from "./routes/router";
 
 import "./App.scss";
 import { UserContextProvider } from "./providers/User";
+import { Toaster } from "sonner";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +18,13 @@ const App = () => {
                fallbackElement={<p>Initial...</p>}
             />
          </UserContextProvider>
+         <Toaster
+            closeButton
+            richColors
+            theme="dark"
+            position="bottom-center"
+         />
+         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
    );
 };
