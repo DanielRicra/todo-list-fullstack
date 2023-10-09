@@ -1,5 +1,5 @@
 import { ApiRequest } from "../api";
-import { Task } from "../../types";
+import { Task, TaskForCreate } from "../../types";
 
 export const TaskService = {
    getImportantByUserId: async (userId: string) =>
@@ -13,4 +13,6 @@ export const TaskService = {
       taskId: Task["taskId"];
       data: Partial<Task>;
    }) => ApiRequest.put<Partial<Task>>(`/task/${taskId}`, data),
+   create: async (data: TaskForCreate) =>
+      ApiRequest.post<Partial<Task>>(`/task`, data),
 };
