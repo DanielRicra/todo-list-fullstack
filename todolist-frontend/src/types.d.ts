@@ -23,6 +23,17 @@ export interface Task {
   important?: boolean
 }
 
+export interface TaskForCreate {
+  name: string
+  state: boolean
+  taskListId: number
+  createdAt: string
+  dueDate?: string
+  note?: string
+  completedAt?: string
+  important?: boolean
+}
+
 export interface UserForAuth {
   email: string;
   password: string;
