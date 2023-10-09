@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import axios from "axios";
+import { useLocation } from "react-router-dom";
+import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { toast } from "sonner";
 
 import AddSharpIcon from "@mui/icons-material/AddSharp";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DateTextField } from "../../Inputs/Inputs";
 
-import { IMPORTANT, PLANNED } from "../../../constants/taskListId";
+import { DateTextField } from "../../Inputs/Inputs";
 import "./CreateTaskForm.scss";
 import type { TaskList } from "../../../types";
+import {
+   useCreateTask,
+   useGetUserTaskLists,
+} from "../../../hooks/useTaskLists";
+import { useUserContext } from "../../../providers/User";
 
 const initialTaskState = {
    name: "",
    state: false,
    createdAt: "",
-   taskListId: 0,
    dueDate: "",
 };
 
@@ -29,8 +33,6 @@ interface CreateTaskFormProps {
    taskListId?: string;
 }
 
-// TODO: Resolve tasklist, pass a a prop or make a request here
-
 const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
    handleOpenWarning,
    taskListId,
@@ -38,16 +40,18 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
    const [taskData, setTaskData] = useState(initialTaskState);
    const [showTaskListMenu, setShowTaskListMenu] = useState(false);
    const [showDatePicker, setShowDatePicker] = useState(false);
-   const [selectedTaskList, setSelectedTaskList] = useState<TaskList>({
+   const [selectedTaskList, setSelectedTaskList] = useState<Partial<TaskList>>({
       name: "",
-      taskListId: 0,
-      tasks: [],
-      userId: 1,
    });
    const [dueDate, setDueDate] = useState(null);
-   const taskLists: TaskList[] = [
-      { name: "New One", taskListId: 1, tasks: [], userId: 1 },
-   ];
+   const location = useLocation();
+   const isImportantOrPlanned = location.pathname.includes("/tasks");
+   const { user } = useUserContext();
+   const { data: taskLists } = useGetUserTaskLists(
+      user?.userId ?? 0,
+      isImportantOrPlanned
+   );
+   const { mutate } = useCreateTask();
 
    const darkCalendar = createTheme({
       palette: {
@@ -68,40 +72,43 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
    });
 
    useEffect(() => {
-      setTaskData((prev) => ({
-         ...prev,
-         taskListId: parseInt(taskListId ?? "0", 10),
-      }));
-      setSelectedTaskList((prev) => ({
-         ...prev,
-         name: taskLists[0].name,
-         taskListId: taskLists[0].taskListId,
-      }));
+      if (taskListId) {
+         setSelectedTaskList((prev) => ({
+            ...prev,
+            taskListId: parseInt(taskListId),
+         }));
+      }
    }, [taskListId]);
 
-   const createTask = () => {
-      if (selectedTaskList?.taskListId === undefined) {
+   const onSubmit: React.FormEventHandler = (event) => {
+      event.preventDefault();
+      if (isImportantOrPlanned && selectedTaskList.taskListId) {
          handleOpenWarning();
          return;
       }
-      axios
-         .post("http://localhost:8080/api/task", {
+
+      mutate(
+         {
             ...taskData,
-            taskListId:
-               taskListId === IMPORTANT.toString() ||
-               taskListId === PLANNED.toString()
-                  ? selectedTaskList.taskListId
-                  : taskData.taskListId,
+            taskListId: selectedTaskList.taskListId ?? 0,
             createdAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-            dueDate: dueDate ? format(dueDate, "yyyy-MM-dd") : null,
-         })
-         .then((_response) => {
-            setTaskData(initialTaskState);
-            cleanCreateTaskFields();
-         })
-         .catch((error) => {
-            console.log(error);
-         });
+            dueDate: dueDate ? format(dueDate, "yyyy-MM-dd") : undefined,
+         },
+         {
+            onSuccess: () => {
+               setTaskData(initialTaskState);
+               cleanCreateTaskFields();
+               toast.success("Task created successfully", { duration: 3000 });
+            },
+            onError: (error) => {
+               toast.error(
+                  error instanceof Error
+                     ? error.message
+                     : "Something went wrong"
+               );
+            },
+         }
+      );
    };
 
    const cleanCreateTaskFields = () => {
@@ -111,7 +118,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
    };
 
    return (
-      <div className="tasks__create-task">
+      <form className="tasks__create-task" onSubmit={onSubmit}>
          <AddSharpIcon fontSize="small" />
          <input
             type="text"
@@ -121,8 +128,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             }
             value={taskData.name}
          />
-         {(taskListId === IMPORTANT.toString() ||
-            taskListId === PLANNED.toString()) && (
+         {isImportantOrPlanned && (
             <div className="tasks__select-tasklist">
                <div
                   className="tasks__selected-tasklist"
@@ -212,10 +218,8 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             )}
          </div>
 
-         <button type="button" onClick={createTask}>
-            Create
-         </button>
-      </div>
+         <button type="submit">Create</button>
+      </form>
    );
 };
 
