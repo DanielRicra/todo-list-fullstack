@@ -2,10 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TaskListService } from "../services/taskLists/taskLists.service";
 import type { TaskList } from "../types";
-import { TaskService } from "../services";
-
-const taskListsKey = "taskLists";
-const taskListKey = "taskList";
+import { taskListKey, taskListsKey } from "../constants/query-keys";
 
 export function useGetUserTaskLists(userId: number, enabled = true) {
    return useQuery({
@@ -34,18 +31,6 @@ export function useGetTaskList(taskListId: string) {
       queryFn: async () => {
          const response = await TaskListService.getOne(taskListId);
          return response.data as TaskList;
-      },
-   });
-}
-
-export function useCreateTask() {
-   const queryClient = useQueryClient();
-   return useMutation({
-      mutationFn: TaskService.create,
-      onSuccess: (response) => {
-         queryClient.invalidateQueries({
-            queryKey: [taskListKey, `${response.data.taskListId}`],
-         });
       },
    });
 }
