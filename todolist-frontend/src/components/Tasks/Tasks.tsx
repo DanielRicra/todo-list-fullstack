@@ -10,12 +10,13 @@ import Task from "./Task/Task";
 import TaskForm from "./TaskForm/TaskForm";
 import CreateTaskForm from "./CreateTaskForm/CreateTaskForm";
 import { TaskListHeader } from "./TaskListHeader";
-import { useGetTaskList } from "../../hooks/useTaskLists";
+import { useGetTaskList } from "../../hooks/use-task-lists";
+import useModalStore from "../../hooks/use-modal-store";
 
 const Tasks = () => {
    const navbar = document.getElementById("navbar");
    const [showCompletedTasks, setShowCompletedTasks] = useState(false);
-   const [taskFormId, setTaskFormId] = useState(0);
+   const { isOpen: isTaskFormOpen, onClose, onOpen } = useModalStore();
 
    const [showWarningCreateTask, setShowWarningCreateTask] = useState(false);
 
@@ -47,21 +48,25 @@ const Tasks = () => {
                      <h3 className="h3">There are no tasks yet</h3>
                   )}
                   {isLoading ? (
-                     <Box sx={{ width: '100%' }}>
+                     <Box sx={{ width: "100%" }}>
                         <Skeleton animation="wave" />
                         <Skeleton animation="wave" />
                         <Skeleton animation="wave" />
                      </Box>
                   ) : (
-                        <ul>
-                           {pendingTasks?.map((task) => (
-                              <li key={task.taskId}>
-                                 <Task task={task} onEdit={() => {}} />
-                              </li>
-                           ))}
-                        </ul>
-                     )
-                  }
+                     <ul>
+                        {pendingTasks?.map((task) => (
+                           <li key={task.taskId}>
+                              <Task
+                                 task={task}
+                                 onEdit={() => {
+                                    onOpen(task);
+                                 }}
+                              />
+                           </li>
+                        ))}
+                     </ul>
+                  )}
 
                   {completedTasks.length > 0 && (
                      <div>
@@ -88,7 +93,12 @@ const Tasks = () => {
                         >
                            {completedTasks.map((task) => (
                               <li key={task.taskId}>
-                                 <Task task={task} onEdit={() => {}} />
+                                 <Task
+                                    task={task}
+                                    onEdit={() => {
+                                       onOpen(task);
+                                    }}
+                                 />
                               </li>
                            ))}
                         </ul>
@@ -124,20 +134,12 @@ const Tasks = () => {
             </Alert>
          </Snackbar>
 
-         {taskFormId !== 0 && (
+         {isTaskFormOpen ? (
             <>
-               <TaskForm
-                  setTaskFormId={setTaskFormId}
-                  task={taskList?.tasks.find((tsk) => tsk.taskId === taskFormId)}
-                  setTasks={undefined}
-                  tasks={undefined}
-               />
-               <div
-                  className="overlay__taskform"
-                  onClick={() => setTaskFormId(0)}
-               />
+               <TaskForm />
+               <div className="overlay__task-form" onClick={onClose} />
             </>
-         )}
+         ) : null}
       </>
    );
 };
