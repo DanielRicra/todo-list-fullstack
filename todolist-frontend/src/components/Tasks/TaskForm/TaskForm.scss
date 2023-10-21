@@ -1,4 +1,4 @@
-@keyframes shoFormTask {
+@keyframes showFormTask {
    0% {
       opacity: 0;
       transform: translateX(150px);
@@ -27,8 +27,8 @@
    padding: .6rem;
    background-color: #262b51;
    z-index: 1000;
-   animation-name: shoFormTask;
-   animation-duration: 750ms;
+   animation-name: showFormTask;
+   animation-duration: 300ms;
    animation-timing-function: ease-in;
    
    border-left: 1px solid rgba(0, 0, 0, 0.45);
@@ -38,6 +38,12 @@
    top: 0;
    bottom: 0;
    right: 0;
+
+   .field-error {
+      font-size: 13px;
+      color: #ec2727;
+      font-weight: 500;
+   }
 
    .task-form__close {
       display: flex;
@@ -83,22 +89,22 @@
       
    }
    
-   .task-form__duedate {
+   .task-form__due-date {
       position: relative;
       display: flex;
       background-color: rgba(54, 62, 116, 0.5);
       border-radius: .3rem;
    
-      .duedate-text {
+      .due-date-text {
          flex: 1;
          padding: 1rem .7rem;
       }
-      .duedate-date-picker {
+      .due-date-date-picker {
          position: absolute;
          top: 100%;
       }   
 
-      .clean-duedate {
+      .clean-due-date {
          display: flex;
          align-items: center;
          font-size: 14px;
@@ -114,7 +120,7 @@
       }
    }
 
-   .duedate-content {
+   .due-date-content {
       flex: 1;
       display: flex;
       justify-content: space-between;
