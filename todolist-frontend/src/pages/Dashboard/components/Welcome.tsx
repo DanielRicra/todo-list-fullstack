@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { useGetUserTaskLists } from "../../../hooks/useTaskLists";
+import { useGetUserTaskLists } from "../../../hooks/use-task-lists";
 import { useUserContext } from "../../../providers/User";
 import { useEffect } from "react";
 

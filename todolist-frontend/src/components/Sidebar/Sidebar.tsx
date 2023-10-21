@@ -22,7 +22,7 @@ import { Link, useParams } from "react-router-dom";
 import {
    useCreateTaskList,
    useGetUserTaskLists,
-} from "../../hooks/useTaskLists";
+} from "../../hooks/use-task-lists";
 import { useUserContext } from "../../providers/User";
 
 interface SidebarProps {
