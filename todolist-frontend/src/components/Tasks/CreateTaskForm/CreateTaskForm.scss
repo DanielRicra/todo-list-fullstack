@@ -18,8 +18,8 @@
       }
       
       button,
-      .duedate,
-      .tasks__select-tasklist {
+      .due-date,
+      .tasks__select-task-list {
          flex: 1;
       }
    }
@@ -35,20 +35,20 @@
       color: #fdfdfd;
    }
 
-   .duedate {
+   .due-date {
       position: relative;
       display: flex;
       background-color: transparent;
       border-radius: .3rem;
 
-      .duedate-text {
+      .due-date-text {
          flex: 1;
          font-size: 14px;
          font-weight: 400;
          padding: .65rem .3rem;
          cursor: default;
       }
-      .duedate-date-picker {
+      .due-date-date-picker {
          position: absolute;
          bottom: 110%;
          border-radius: .3rem;
@@ -71,7 +71,7 @@
          }
       } 
 
-      .clean-duedate {
+      .clean-due-date {
          display: flex;
          align-items: center;
          font-size: 14px;
@@ -87,7 +87,7 @@
       }
    }
 
-   .duedate-content {
+   .due-date-content {
       flex: 1;
       display: flex;
       justify-content: space-between;

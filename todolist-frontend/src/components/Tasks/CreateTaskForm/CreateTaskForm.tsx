@@ -15,11 +15,9 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { DateTextField } from "../../Inputs/Inputs";
 import "./CreateTaskForm.scss";
 import type { TaskList } from "../../../types";
-import {
-   useCreateTask,
-   useGetUserTaskLists,
-} from "../../../hooks/useTaskLists";
+import { useGetUserTaskLists } from "../../../hooks/use-task-lists";
 import { useUserContext } from "../../../providers/User";
+import { useCreateTask } from "../../../hooks/use-tasks";
 
 const initialTaskState = {
    name: "",
@@ -32,7 +30,6 @@ interface CreateTaskFormProps {
    handleOpenWarning: () => void;
    taskListId?: string;
 }
-// TODO: implement react hook for if necessary or just make work the update task
 const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
    handleOpenWarning,
    taskListId,
@@ -129,9 +126,9 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             value={taskData.name}
          />
          {isImportantOrPlanned && (
-            <div className="tasks__select-tasklist">
+            <div className="tasks__select-task-list">
                <div
-                  className="tasks__selected-tasklist"
+                  className="tasks__selected-task-list"
                   onClick={() => {
                      setShowTaskListMenu((prev) => !prev);
                      setShowDatePicker(false);
@@ -141,7 +138,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                   <p>{selectedTaskList.name}</p>
                </div>
                {showTaskListMenu && (
-                  <div className="tasks__tasklists">
+                  <div className="tasks__task-lists">
                      {taskLists &&
                         taskLists.map((taskList) => (
                            <div
@@ -164,16 +161,16 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             </div>
          )}
 
-         <div className="duedate">
+         <div className="due-date">
             <div
-               className="duedate-content"
+               className="due-date-content"
                onClick={() => {
                   setShowDatePicker((prev) => !prev);
                   setShowTaskListMenu(false);
                }}
             >
                {dueDate && (
-                  <div className="duedate-text">
+                  <div className="due-date-text">
                      {format(dueDate, "ccc',' MMM d',' y")}
                   </div>
                )}
@@ -186,7 +183,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             {showDatePicker && (
                <div
                   className={
-                     "duedate-date-picker" + (dueDate ? "" : " no-date")
+                     "due-date-date-picker" + (dueDate ? "" : " no-date")
                   }
                >
                   <ThemeProvider theme={darkCalendar}>
@@ -205,7 +202,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                   </ThemeProvider>
                   {dueDate && (
                      <div
-                        className="clean-duedate"
+                        className="clean-due-date"
                         onClick={() => {
                            setShowDatePicker(false);
                            setDueDate(null);
