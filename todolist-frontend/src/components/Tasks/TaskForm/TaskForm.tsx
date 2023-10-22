@@ -68,8 +68,14 @@ const TaskForm = () => {
    const [showCalendar, setShowCalendar] = useState(false);
    const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
 
-   const { mutate: deleteTaskMutation } = useDeleteTask(task?.taskListId);
-   const { mutate: updateTaskMutation } = useUpdateTask(task?.taskListId);
+   const { mutate: deleteTaskMutation, isLoading: isDeletingTask } =
+      useDeleteTask(task?.taskListId);
+   const { mutate: updateTaskMutation, isLoading: isUpdatingTask } =
+      useUpdateTask(task?.taskListId);
+
+   const closeAlert = () => {
+      setIsOpenDeleteModal(false);
+   };
 
    const handleUpdate = (values: UpdateTask) => {
       updateTaskMutation(
@@ -104,7 +110,7 @@ const TaskForm = () => {
    const deleteTask = () => {
       deleteTaskMutation(task?.taskId ?? 0, {
          onSuccess: () => {
-            setIsOpenDeleteModal(false);
+            closeAlert();
             toast.success("Task deleted successfully");
             onClose();
          },
@@ -115,13 +121,9 @@ const TaskForm = () => {
                   ? error.response?.data.message || defaultMessage
                   : defaultMessage
             );
-            console.log("Error", error);
+            closeAlert();
          },
       });
-   };
-
-   const closeAlert = () => {
-      setIsOpenDeleteModal(false);
    };
 
    return (
@@ -251,6 +253,7 @@ const TaskForm = () => {
                   type="button"
                   className="update-button"
                   onClick={handleSubmit(handleUpdate)}
+                  disabled={isUpdatingTask}
                >
                   Save Changes
                </button>
@@ -294,6 +297,7 @@ const TaskForm = () => {
                      onClick={closeAlert}
                      color="secondary"
                      variant="contained"
+                     disabled={isDeletingTask}
                   >
                      Disagree
                   </Button>
@@ -302,6 +306,7 @@ const TaskForm = () => {
                      color="error"
                      variant="contained"
                      autoFocus
+                     disabled={isDeletingTask}
                   >
                      Agree
                   </Button>

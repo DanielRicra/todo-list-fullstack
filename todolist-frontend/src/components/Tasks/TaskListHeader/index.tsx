@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import { useState, useEffect } from "react";
 import {
    Button,
    Dialog,
@@ -8,74 +7,66 @@ import {
    DialogContentText,
    DialogTitle,
    TextField,
-} from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+} from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 
-import './styles.scss';
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+
+import "./styles.scss";
+import { darkTheme } from "./mui-styles";
+import {
+   useDeleteTaskList,
+   useUpdateTaskList,
+} from "../../../hooks/use-task-lists";
+import { useNavigate } from "react-router-dom";
 
 interface TaskListHeaderProps {
    taskListName: string;
+   userId: number;
+   taskListId: number;
 }
 
 export const TaskListHeader: React.FC<TaskListHeaderProps> = ({
    taskListName,
+   userId,
+   taskListId,
 }) => {
    const [isMoreClicked, setIsMoreClicked] = useState(false);
    const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
    const [openEditAlert, setOpenEditAlert] = useState(false);
-   const [formData, setFormData] = useState('');
+   const [name, setName] = useState("");
+   const navigate = useNavigate();
 
-   const dark = createTheme({
-      palette: {
-         mode: 'dark',
-         primary: {
-            main: '#454f94',
-            light: '#363e74',
-         },
-         secondary: {
-            main: '#E65F2B',
-         },
-         error: { main: '#e23a23' },
-         background: {
-            default: '#1b1f3a',
-            paper: '#292f57',
-         },
-      },
-   });
+   const { mutate: updateMutate, isLoading: isUpdating } =
+      useUpdateTaskList(userId);
+   const { mutate: deleteMutate, isLoading: isDeleting } =
+      useDeleteTaskList(userId);
 
    const deleteTaskList = () => {
-      // axios
-      //    .delete(
-      //       `https://spring-tstodolist.herokuapp.com/api/taskList/delete/${taskListId}`
-      //    )
-      //    .then((response) => {
-      //    })
-      //    .catch((error) => {
-      //       console.log(error);
-      //    })
-      //    .finally(() => {
-      //       setOpenDeleteAlert(false);
-      //       setIsMoreClicked(false);
-      //    });
-      console.log('Tasks.tsx -> Implement deleteTaskList');
+      deleteMutate(taskListId, {
+         onSuccess: () => {
+            navigate("/dashboard");
+         },
+         onSettled: () => {
+            setOpenDeleteAlert(false);
+            setIsMoreClicked(false);
+         },
+      });
    };
 
    const updateTaskList = () => {
-      // axios
-      //    .put(
-      //       `https://spring-tstodolist.herokuapp.com/api/taskList/${taskListId}`,
-      //       { name: taskListName, userId: user?.userId }
-      //    )
-      //    .then((response) => {
-      //    })
-      //    .catch((error) => {
-      //       console.log(error);
-      //    })
-      //    .then(() => {
-      //       setOpenEditAlert(false);
-      //       setIsMoreClicked(false);
-      //    });
-      console.log('Tasks.tsx -> implement updateTaskList');
+      updateMutate(
+         {
+            taskListId,
+            body: { name, userId },
+         },
+         {
+            onSettled: () => {
+               setOpenEditAlert(false);
+               setIsMoreClicked(false);
+            },
+         }
+      );
    };
 
    const closeAlert = () => {
@@ -83,19 +74,23 @@ export const TaskListHeader: React.FC<TaskListHeaderProps> = ({
       setOpenEditAlert(false);
    };
 
+   useEffect(() => {
+      setName(taskListName);
+   }, [taskListName]);
+
    return (
       <>
-         <div className='tasks__list-tittle'>
+         <div className="tasks__list-tittle">
             <h2>{taskListName}</h2>
-            <div className='more-button'>
+            <div className="more-button">
                <div
-                  className='more-button-icon'
+                  className="more-button-icon"
                   onClick={() => setIsMoreClicked((prev) => !prev)}
                >
                   <MoreHorizOutlinedIcon />
                </div>
                {isMoreClicked && (
-                  <div className='tasklist__menu'>
+                  <div className="tasklist__menu">
                      <p onClick={() => setOpenEditAlert(true)}>Edit name</p>
                      <p onClick={() => setOpenDeleteAlert(true)}>
                         Delete task list
@@ -105,71 +100,74 @@ export const TaskListHeader: React.FC<TaskListHeaderProps> = ({
             </div>
             {isMoreClicked && (
                <span
-                  className='overlay__more-icon'
+                  className="overlay__more-icon"
                   onClick={() => setIsMoreClicked(false)}
                />
             )}
          </div>
 
-         <ThemeProvider theme={dark}>
+         <ThemeProvider theme={darkTheme}>
             <Dialog
                open={openDeleteAlert || openEditAlert}
                onClose={closeAlert}
                fullWidth
-               aria-labelledby='alert-dialog-title'
-               aria-describedby='alert-dialog-description'
+               aria-labelledby="alert-dialog-title"
+               aria-describedby="alert-dialog-description"
             >
-               <DialogTitle id='alert-dialog-title'>
+               <DialogTitle id="alert-dialog-title">
                   {openDeleteAlert
-                     ? 'Are you sure you want to delete this TaskList and all its tasks?'
-                     : 'Update Task List name'}
+                     ? "Are you sure you want to delete this TaskList and all its tasks?"
+                     : "Update Task List name"}
                </DialogTitle>
                <DialogContent>
                   {openDeleteAlert && (
-                     <DialogContentText id='alert-dialog-description'>
+                     <DialogContentText id="alert-dialog-description">
                         {taskListName}
                      </DialogContentText>
                   )}
                   {openEditAlert && (
                      <TextField
                         autoFocus
-                        margin='dense'
-                        id='name'
-                        label='Task List Name'
-                        type='text'
+                        margin="dense"
+                        id="name"
+                        label="Task List Name"
+                        type="text"
                         fullWidth
-                        color='secondary'
-                        variant='standard'
-                        value={formData}
-                        onChange={(e) => setFormData(e.target.value)}
+                        color="secondary"
+                        variant="standard"
+                        disabled={isUpdating}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                      />
                   )}
                </DialogContent>
                <DialogActions>
                   <Button
                      onClick={closeAlert}
-                     color='secondary'
-                     variant='contained'
+                     color="secondary"
+                     variant="contained"
                   >
                      Cancel
                   </Button>
                   {openDeleteAlert ? (
                      <Button
                         onClick={deleteTaskList}
-                        color='error'
-                        variant='contained'
+                        color="error"
+                        variant="contained"
                         autoFocus
+                        disabled={isDeleting}
                      >
-                        Delete
+                        {isDeleting ? "Deleting..." : "Delete"}
                      </Button>
                   ) : (
                      <Button
                         onClick={updateTaskList}
-                        color='primary'
-                        variant='contained'
+                        color="primary"
+                        variant="contained"
                         autoFocus
+                        disabled={isUpdating}
                      >
-                        Save Changes
+                        {isUpdating ? "Saving changes..." : "Save changes"}
                      </Button>
                   )}
                </DialogActions>
