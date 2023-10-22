@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Alert, Box, Skeleton, Snackbar } from "@mui/material";
+import { Alert, Box, Skeleton, Snackbar, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -42,7 +42,17 @@ const Tasks = () => {
          >
             <div className="tasks__container">
                <div className="tasks__list">
-                  <TaskListHeader taskListName={taskList?.name ?? ""} />
+                  {isLoading || !taskList ? (
+                     <Skeleton width="100%">
+                        <Typography variant="h2">.</Typography>
+                     </Skeleton>
+                  ) : (
+                     <TaskListHeader
+                        taskListName={taskList.name}
+                        userId={taskList.userId}
+                        taskListId={taskList.taskListId}
+                     />
+                  )}
 
                   {taskList?.tasks.length === 0 && (
                      <h3 className="h3">There are no tasks yet</h3>
