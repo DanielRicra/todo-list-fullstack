@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TaskListService } from "../services/taskLists/taskLists.service";
+import { TaskListService } from "../services/taskLists/task-lists.service";
 import type { TaskList } from "../types";
 import { taskListKey, taskListsKey } from "../constants/query-keys";
 
