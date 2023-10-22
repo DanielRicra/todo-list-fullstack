@@ -12,6 +12,8 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 
 import "./Task.scss";
 import type { Task as TaskI } from "../../../types";
+import { useUpdateTask } from "../../../hooks/use-tasks";
+import { toast } from "sonner";
 
 interface TaskProps {
    task: TaskI;
@@ -19,10 +21,12 @@ interface TaskProps {
 }
 
 const Task: React.FC<TaskProps> = ({ task, onEdit }) => {
-   const [formData, setFormData] = useState<TaskI>(task);
+   const [formData, setFormData] = useState<TaskI>(structuredClone(task));
+   const { mutate: updateMutate, isLoading: isUpdating } = useUpdateTask(
+      task.taskListId
+   );
 
-   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [e.target.name]: e.target.checked }));
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       let completedDate: string | undefined | null =
          e.target.name === "state"
             ? format(new Date(), "yyyy-MM-dd'T'HH:mm:ss")
@@ -30,22 +34,29 @@ const Task: React.FC<TaskProps> = ({ task, onEdit }) => {
       if (e.target.name === "state" && formData.state === true) {
          completedDate = null;
       }
-      // axios
-      //    .put(url, {
-      //       ...formData,
-      //       [e.target.name]: e.target.checked,
-      //       completedAt: completedDate,
-      //    })
-      //    .then((response) => {
-      //       const updatedTask = response.data;
-      //    })
-      //    .catch((error) => {
-      //       console.log(error);
-      //    });
+      updateMutate(
+         {
+            taskId: task.taskId,
+            data: {
+               ...formData,
+               [e.target.name]: e.target.checked,
+               completedAt: completedDate,
+            },
+         },
+         {
+            onSuccess: () => {
+               toast.success("Task updated successfully");
+            },
+            onError: () => {
+               toast.error("Couldn't update task, try again later.");
+            },
+         }
+      );
+      setFormData((prev) => ({ ...prev, [e.target.name]: e.target.checked }));
    };
 
    useEffect(() => {
-      setFormData({ ...task });
+      setFormData(structuredClone(task));
    }, [task]);
 
    return (
@@ -65,6 +76,7 @@ const Task: React.FC<TaskProps> = ({ task, onEdit }) => {
             checked={formData.state}
             onClick={(e) => e.stopPropagation()}
             onChange={handleChange}
+            disabled={isUpdating}
          />
 
          <div className="task__details">
@@ -126,6 +138,7 @@ const Task: React.FC<TaskProps> = ({ task, onEdit }) => {
             onClick={(e) => e.stopPropagation()}
             checked={formData.important}
             onChange={handleChange}
+            disabled={isUpdating}
          />
       </div>
    );
