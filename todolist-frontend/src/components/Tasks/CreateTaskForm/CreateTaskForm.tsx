@@ -48,7 +48,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
       user?.userId ?? 0,
       isImportantOrPlanned
    );
-   const { mutate } = useCreateTask();
+   const { mutate, isLoading: isCreatingTask } = useCreateTask();
 
    const darkCalendar = createTheme({
       palette: {
@@ -215,7 +215,9 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             )}
          </div>
 
-         <button type="submit">Create</button>
+         <button type="submit" disabled={isCreatingTask}>
+            Create
+         </button>
       </form>
    );
 };
