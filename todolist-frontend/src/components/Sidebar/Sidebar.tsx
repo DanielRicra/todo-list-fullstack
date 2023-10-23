@@ -17,7 +17,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import "./Sidebar.scss";
-import { IMPORTANT, PLANNED } from "../../constants/taskListId";
 import { Link, useParams } from "react-router-dom";
 import {
    useCreateTaskList,
@@ -72,6 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
    const handleFormListClose = () => {
       setOpenFormList(false);
    };
+   // TODO: fix important and planned link styles
 
    return (
       <>
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
                <ul>
                   <li
                      className={
-                        taskListId === IMPORTANT.toString()
+                        taskListId === "0"
                            ? "sidebar-container active"
                            : "sidebar-container"
                      }
@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
                   </li>
                   <li
                      className={
-                        taskListId === PLANNED.toString()
+                        taskListId === "-1"
                            ? "sidebar-container active"
                            : "sidebar-container"
                      }
