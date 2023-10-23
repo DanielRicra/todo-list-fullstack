@@ -40,8 +40,11 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+      - name: Clear npm cache
+        run: npm cache clean --force
       - name: Install dependencies
-        run: npm install
+        working-directory: ./todolist-frontend
+        run: npm install --prefix ./todolist-frontend
       - name: Build
         run: npm run build
       - name: Setup Pages
