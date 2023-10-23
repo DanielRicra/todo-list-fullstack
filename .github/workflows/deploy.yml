@@ -40,6 +40,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+          cache-dependency-path: ./todolist-frontend/package-lock.json
       - name: Clear npm cache
         run: npm cache clean --force
       - name: Install dependencies
