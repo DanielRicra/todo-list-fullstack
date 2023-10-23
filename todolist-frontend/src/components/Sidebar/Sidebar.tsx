@@ -13,7 +13,7 @@ import {
    Skeleton,
    TextField,
 } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import "./Sidebar.scss";
@@ -23,6 +23,7 @@ import {
    useGetUserTaskLists,
 } from "../../hooks/use-task-lists";
 import { useUserContext } from "../../providers/User";
+import { darkTheme } from "./mui-styles";
 
 interface SidebarProps {
    showSidebar: boolean;
@@ -38,23 +39,6 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
    const { mutate, isLoading: isCreatingTaskList } = useCreateTaskList();
 
    const { taskListId } = useParams();
-
-   const dark = createTheme({
-      palette: {
-         mode: "dark",
-         primary: {
-            main: "#454f94",
-         },
-         secondary: {
-            main: "#E65F2B",
-         },
-         error: { main: "#e23a23" },
-         background: {
-            default: "#1b1f3a",
-            paper: "#292f57",
-         },
-      },
-   });
 
    const createNewTaskList = () => {
       mutate(
@@ -164,7 +148,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
                </button>
             </div>
 
-            <ThemeProvider theme={dark}>
+            <ThemeProvider theme={darkTheme}>
                <Dialog
                   open={openFormList}
                   onClose={handleFormListClose}
