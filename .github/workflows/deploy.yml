@@ -42,8 +42,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./todolist-frontend/package-lock.json
       - name: Install dependencies
-        working-directory: ./todolist-frontend
-        run: npm install --prefix ./todolist-frontend
+        run: npm install
       - name: Build
         run: npm run build
       - name: Setup Pages
